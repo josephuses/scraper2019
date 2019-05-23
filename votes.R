@@ -1,32 +1,43 @@
 # Make a function to process each file
 library(jsonlite)
+library(compiler)
 processrs <- function(f){
   df <- fromJSON(f, flatten = TRUE)
   rs <- df$rs
   vbc <- df$vbc
-  df
+  rs$vbc <- vbc
+  rs
 }
 
 processcos <- function(f){
   df <- fromJSON(f, flatten = TRUE)
   cos <- df$cos
   vbc <- df$vbc
-  df
+  cos$vbc <- vbc
+  cos
 }
 
 processSts <- function(f){
   df <- fromJSON(f, flatten = TRUE)
   sts <- df$sts
   vbc <- df$vbc
-  df
+  sts$vbc <- vbc
+  sts
 }
 
 processobs <- function(f){
   df <- fromJSON(f, flatten = TRUE)
   obs <- df$obs
   vbc <- df$vbc
-  df
+  obs$vbc <- vbc
+  obs
 }
+
+processrs <- cmpfun(processrs)
+processSts <- cmpfun(processSts)
+processcos <- cmpfun(processcos)
+processobs <- cmpfun(processobs)
+
 
 # Find all .json files
 ## Find all files named "coc.json"
@@ -39,7 +50,8 @@ json_files <- dir("./scraper2019/data/results/", recursive = TRUE, full.names = 
 vote_files <- setdiff(setdiff(json_files, coc_files), info_files)
 
 
+
 votes <- lapply(vote_files, processrs)
 cos_votes <- lapply(vote_files, processcos)
-sts_votes <- lapply(vote_files, processSts)
-obs_votes <- lapply(vote_files, processobs)
+#sts_votes <- lapply(vote_files, processSts)
+#obs_votes <- lapply(vote_files, processobs)
