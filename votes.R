@@ -55,3 +55,10 @@ votes <- lapply(vote_files, processrs)
 cos_votes <- lapply(vote_files, processcos)
 #sts_votes <- lapply(vote_files, processSts)
 #obs_votes <- lapply(vote_files, processobs)
+
+library(data.table)
+votes2 <- rbindlist(votes, fill = TRUE)
+fwrite(votes2, "./scraper2019/data/processed/votes2.csv")
+cos_votes2 <- rbindlist(cos_votes, fill = TRUE)
+fwrite(cos_votes2, "./scraper2019/data/processed/cos_votes2.csv")
+
