@@ -1,0 +1,88 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## How to merge the files
+
+```{r}
+library(tidyverse)
+library(data.table)
+```
+
+Place `brgy_info.csv` in the desired folder and use `data.table::fread` for faster import.  The precinct level votes are found in the `votes2.csv` file. See the Dictionary of Terms section to learn more about the columns of the `votes2.csv` file.  The `contest.csv` file contains the ballot order (`bo`), which can be matched with the `boc` column in the `brgy_master.csv`.
+
+```{r}
+# import the files
+brgy_master <- fread("./data/processed/brgy_info.csv")
+votes <- fread("./data/processed/votes2.csv")
+contest <- fread("./data/processed/contest.csv")
+
+# say for example you want to import all votes for senators
+senators <- contest[ccn == "SENATOR"]
+senators <- senators %>% left_join(votes, by = c("boc"="bo", "cc"))
+
+# remove the unneeded objects if you don't have enough memory
+# the resulting file sizes are quite large
+# rm(contest)
+# rm(votes)
+
+senators <- senators %>% left_join(brgy_master, by = "vbc")
+
+# export the senators object into a csv file
+fwrite(senators, "./data/processed/senators_brgy.csv")
+```
+
+The file `info.R` is used to extract the information from the `info.json` files into `csv` files. The file `coc.R` is used to extract the information from the `coc.json` files into `csv` files. 
+
+## Dictionary of terms
+
+* `boc` ballot order in the coc
+* `bon` ballot order name; the name of the contestant
+* `boi` ballot order (index?)
+* `to`                   
+* `pc`                   
+* `pn` party name                   
+* `pcc`                   
+* `pcy`                  
+* `pcm`                   
+* `pck`                  
+* `type.x` level of governance              
+* `pre.x`                
+* `ccn` position aspired for
+* `ccc`                  
+* `cn` position aspired for                    
+* `cc`                   
+* `v` number of votes at the precinct level                     
+* `tot` total number of votes cast             
+* `per` percent of votes based on `tot`                  
+* `ser`                  
+* `vbc` vote barangay code
+* `rc`                   
+* `rcc`                   
+* `rn`                   
+* `can`                   
+* `cll`                  
+* `cl`                    
+* `url`                  
+* `total-vb`              
+* `total-voters` total registered voters in the barangay       
+* `ppc`                   
+* `ppcc` barangay/municipal/provincial code                 
+* `ppn` name of barangay/municipality/province       
+* `pre.y`                
+* `cpre`  precinct codes                
+* `url1`                 
+* `type.y`                
+* `rccm` municipal code                
+* `rccp` provincial code                  
+* `municipality` name of the municipality         
+* `province` name of the province              
+* `Name` name of barangay/municipality/province[^1]                
+* `Inter-Level` administrative levels: barangay, municipal, etc
+* `City Class` City class
+* `Income Classification` 1, 2, 3, 4, 5 
+* `Urban/Rural` 
+* `rccr` region code          
+* `region` region name
+
+[^1]: https://psa.gov.ph/classification/psgc/

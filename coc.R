@@ -48,3 +48,5 @@ rs <- rbindlist(rs)
 
 fwrite(coc, "./scraper2019/data/processed/coc.csv")
 fwrite(rs, "./scraper2019/data/processed/rs.csv")
+
+
